@@ -1,0 +1,20 @@
+.chat-message {
+    height: 500px;
+    width: 200px;
+    border: 1px solid red;
+    overflow-x: hidden;
+    position: relative;
+    overflow-y:scroll;
+}
+
+.chat-message ul {
+    height: 500px;
+    position: absolute;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul li {
+    float: left;
+}

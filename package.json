@@ -10,6 +10,7 @@
   "author": "hehongwei",
   "license": "MIT",
   "dependencies": {
-    "electron": "^1.8.4"
+    "electron": "^1.8.4",
+    "jquery": "^3.3.1"
   }
 }
