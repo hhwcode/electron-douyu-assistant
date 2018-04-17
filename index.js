@@ -81,15 +81,15 @@ function formatDanmu(msg) {
  */
 function analyseDanmu(msg) {
     if (msg['type'] == 'chatmsg') {
-        $('.chat-message ul').append('<li>'+msg['nn'] +':'+msg['txt']+'</li>');
+        $('.chat-message ul').append('<li>' + msg['nn'] + ':' + msg['txt'] + '</li>');
         console.log("%s: %s", msg['nn'], msg['txt']);
     }
     if (msg['type'] == 'uenter') {
-        $('.chat-message ul').append('<li>'+msg['nn'] +'进入了直播间');
-        console.log(msg['nn'] +'进入了直播间');
+        $('.chat-message ul').append('<li>' + msg['nn'] + '进入了直播间');
+        console.log(msg['nn'] + '进入了直播间');
     }
 }
 
 function append(msg) {
-    
+
 }
