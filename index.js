@@ -8,8 +8,21 @@ var roomid = config.roomId;
 var scrollable = true;
 var count = 0;
 
-
 connectToDouyu(roomid);
+
+/**
+ * 移动滚动条停止滚动弹幕
+ */
+$(document).ready(function(){
+    $('.chat-message').scroll(function(){
+        var h = $('.chat-message').scrollTop() - ($('.chat-message ul').height() - $('.chat-message').height());
+        if(h < -10) {
+            scrollable = false;
+        } else {
+            scrollable = true;
+        }
+    });
+});
 
 function connectToDouyu(roomid) {
     //创建连接
