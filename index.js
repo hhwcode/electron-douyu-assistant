@@ -4,37 +4,42 @@ const net = require('net');
 const config = require('./config/config');
 
 //房间号
-let roomid = config.roomId;
+var roomid = config.roomId;
+var scrollable = true;
 
-//创建连接
-const s = net.connect({
-    port: 8601,
-    host: 'openbarrage.douyutv.com'
-}, () => {
-    console.log('弹幕服务器连接成功……');
-});
+connectToDouyu(roomid);
 
-//发送进入房间消息
-var msg = 'type@=loginreq/roomid@=' + roomid + '/';
-sendData(s, msg);
-//发送请求分组消息
-msg = 'type@=joingroup/rid@=' + roomid + '/gid@=-9999/';
-sendData(s, msg);
+function connectToDouyu(roomid) {
+    //创建连接
+    const s = net.connect({
+        port: 8601,
+        host: 'openbarrage.douyutv.com'
+    }, () => {
+        console.log('弹幕服务器连接成功……');
+    });
 
-//接收数据
-s.on('data', (chunk) => {
-    formatData(chunk);
-});
-//接收错误消息
-s.on('error', (err) => {
-    console.log(err);
-});
-//发送心跳消息，保持连接
-setInterval(() => {
-    // let timestamp = parseInt(new Date()/1000);
-    let msg = 'type@=mrkl/';
+    //发送进入房间消息
+    var msg = 'type@=loginreq/roomid@=' + roomid + '/';
     sendData(s, msg);
-}, 45000);
+    //发送请求分组消息
+    msg = 'type@=joingroup/rid@=' + roomid + '/gid@=-9999/';
+    sendData(s, msg);
+
+    //接收数据
+    s.on('data', (chunk) => {
+        formatData(chunk);
+    });
+    //接收错误消息
+    s.on('error', (err) => {
+        console.log(err);
+    });
+    //发送心跳消息，保持连接
+    setInterval(() => {
+        // let timestamp = parseInt(new Date()/1000);
+        let msg = 'type@=mrkl/';
+        sendData(s, msg);
+    }, 45000);
+}
 
 
 /**
@@ -88,6 +93,9 @@ function analyseDanmu(msg) {
         $('.chat-message ul').append('<li>' + msg['nn'] + '进入了直播间');
         // console.log(msg['nn'] + '进入了直播间');
     }
-    let h = $('.chat-message ul').height() - $('.chat-message').height();
-    $('.chat-message').scrollTop(h);
+    if(this.scrollable) {
+        let h = $('.chat-message ul').height() - $('.chat-message').height();
+        $('.chat-message').scrollTop(h);
+    }
+    
 }
