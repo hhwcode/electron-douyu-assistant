@@ -1,14 +1,23 @@
+html, body {
+    height: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-family: arial, sans-serif;
+}
+
 .chat-message {
-    height: 500px;
-    width: 200px;
-    border: 1px solid red;
+    height: 100%;
+    width: 100%;
     overflow-x: hidden;
     position: relative;
     overflow-y:scroll;
 }
 
 .chat-message ul {
-    height: 500px;
     position: absolute;
     list-style: none;
     padding: 0;
@@ -16,5 +25,5 @@
 }
 
 ul li {
-    float: left;
+    margin-bottom: 2px;
 }
