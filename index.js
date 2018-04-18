@@ -6,6 +6,8 @@ const config = require('./config/config');
 //房间号
 var roomid = config.roomId;
 var scrollable = true;
+var count = 0;
+
 
 connectToDouyu(roomid);
 
@@ -15,6 +17,7 @@ function connectToDouyu(roomid) {
         port: 8601,
         host: 'openbarrage.douyutv.com'
     }, () => {
+        $('.chat-message ul').append('<li>弹幕服务器连接成功……</li>');
         console.log('弹幕服务器连接成功……');
     });
 
@@ -22,7 +25,7 @@ function connectToDouyu(roomid) {
     var msg = 'type@=loginreq/roomid@=' + roomid + '/';
     sendData(s, msg);
     //发送请求分组消息
-    msg = 'type@=joingroup/rid@=' + roomid + '/gid@=-9999/';
+    msg = 'type@=joingroup/rid@=' + roomid + '/gid@=1/';
     sendData(s, msg);
 
     //接收数据
@@ -40,7 +43,6 @@ function connectToDouyu(roomid) {
         sendData(s, msg);
     }, 45000);
 }
-
 
 /**
  * 发送数据方法
@@ -85,17 +87,66 @@ function formatDanmu(msg) {
  * @param {*} msg 
  */
 function analyseDanmu(msg) {
+    // console.log(msg);
+    //弹幕颜色
+    var chatMessageColor = '';
+    //贵族弹幕
+    var messageBg = '';
+
     if (msg['type'] == 'chatmsg') {
-        $('.chat-message ul').append('<li>' + msg['nn'] + ':' + msg['txt'] + '</li>');
-        // console.log("%s: %s", msg['nn'], msg['txt']);
+
+        if(msg['nc'] == '1') {
+            // console.log(msg['nl']);
+            if(msg['nl'] == '3') {
+                messageBg = ' style="background-color:#1e87f0; color:white" ';
+            } else if(msg['nl'] == '4') {
+                messageBg = ' style="background-color:#9b39f4; color:white" ';
+            } else {
+                messageBg = ' style="background-color:#FF7F00; color:white" ';
+            }
+            
+        } else {
+            if(msg['col'] == '2') {
+                chatMessageColor = '#1e87f0';
+            }
+    
+            if(msg['col'] == '3') {
+                chatMessageColor = '#7ac84b';
+            }
+            if(msg['col'] == '6') {
+                chatMessageColor = '#FF69B4';
+            }
+            if(msg['col'] == '4') {
+                chatMessageColor = '#FF7F00';
+            }
+            if(msg['col'] == '5') {
+                chatMessageColor = '#9b39f4';
+            }
+            if(msg['col'] == '1') {
+                chatMessageColor = 'red';
+            }
+        }
+
+        $('.chat-message ul').append('<li'+messageBg+'>' + '[' + msg['level'] + ']' + '<span>' + msg['nn'] + '</span>' + 
+        '： ' + '<span style="color:' + chatMessageColor + '">' + msg['txt'] + '</span>' + '</li>');
+
+        count = count + 1;
+        if(count > 200) {
+            $('.chat-message ul').children('li:first').remove();
+        }     
     }
     if (msg['type'] == 'uenter') {
-        $('.chat-message ul').append('<li>' + msg['nn'] + '进入了直播间');
-        // console.log(msg['nn'] + '进入了直播间');
+
+        $('.chat-message ul').append('<li>' + '[' + msg['level'] + ']' + msg['nn'] + ' 进入了直播间');
+
+        count = count + 1;
+        if(count > 200) {
+            $('.chat-message ul').children('li:first').remove();
+        } 
     }
-    if(this.scrollable) {
+    if (this.scrollable) {
         let h = $('.chat-message ul').height() - $('.chat-message').height();
         $('.chat-message').scrollTop(h);
     }
-    
+
 }
