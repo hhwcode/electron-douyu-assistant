@@ -1,17 +1,24 @@
 var $ = require('jquery')
 
 const net = require('net');
-const config = require('./config/config');
-const request = require('request');
+var request = require('request');
+var fs = require('fs')
 
-//房间号
-var roomid = config.roomId;
+var json = '';
 var scrollable = true;
 var count = 0;
 
-connectToDouyu();
+//读取文件获取房间号
+fs.readFile('./config/config.json','utf8',function (err, data) {
+    if(err) console.log(err);
+    json=JSON.parse(data);
 
-getInfo();
+    //连接弹幕服务器并获取弹幕
+    connectToDouyu();
+    //定时获取房间信息
+    getInfo();
+});
+
 
 /**
  * 事件监听
@@ -27,6 +34,14 @@ $(document).ready(function(){
             scrollable = true;
         }
     });
+
+    $("#setting-show").click(function(){
+        $(".setting").toggle();
+    });
+
+    $("#setting-roomid").click(function(){
+        changeRoom();
+    });
 });
 
 function connectToDouyu() {
@@ -40,10 +55,10 @@ function connectToDouyu() {
     });
 
     //发送进入房间消息
-    var msg = 'type@=loginreq/roomid@=' + roomid + '/';
+    var msg = 'type@=loginreq/roomid@=' + json.roomid + '/';
     sendData(s, msg);
     //发送请求分组消息
-    msg = 'type@=joingroup/rid@=' + roomid + '/gid@=1/';
+    msg = 'type@=joingroup/rid@=' + json.roomid + '/gid@=1/';
     sendData(s, msg);
 
     //接收数据
@@ -64,7 +79,7 @@ function connectToDouyu() {
 
 //获取房间信息
 function getRoomInfo() {
-    request('http://open.douyucdn.cn/api/RoomApi/room/' + roomid, (error, response, body) => {
+    request('http://open.douyucdn.cn/api/RoomApi/room/' + json.roomid, (error, response, body) => {
         if (!error && response.statusCode == 200) {
             // console.log(body)
             let data = JSON.parse(body).data;
@@ -73,7 +88,7 @@ function getRoomInfo() {
             $(".room-status").html(data.room_status == '2' ? '<span style="color:orange;font-size:20px;">●</span>':'<span style="color:green;font-size:20px;">●</span>');
             $(".hn").html(data.hn);
             $(".fans-num").html(data.fans_num);
-            console.log(data);
+            // console.log(data);
         }
     });
 }
@@ -197,4 +212,29 @@ function analyseDanmu(msg) {
         $('.chat-message').scrollTop(h);
     }
 
+    
+}
+
+/**
+ * 刷新页面
+ */
+function refresh() {
+    window.location.reload();
+}
+
+
+/**设置房间 */
+function changeRoom() {
+    let roomid = $("#input-roomid").val();
+    console.log(roomid);
+    var pattern = new RegExp('^[0-9]{1,6}$');
+    // console.log(pattern.test(roomid));
+    if(pattern.test(roomid)) {
+        json.roomid = roomid;
+        let r = JSON.stringify(json);
+        fs.writeFile('./config/config.json',r,(err)=>{
+            refresh();
+        });
+    }
+    
 }

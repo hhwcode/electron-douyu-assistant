@@ -53,11 +53,21 @@ ul li {
     bottom: 0;
     height: 30px;
     width: 100%;
-    border: 1px solid #ccc;
+    border-top: 1px solid #ccc;
 }
 
 .bottom span {
     font-size: 13px;
     height: 30px;
     line-height: 30px;
+}
+
+.setting {
+    width: 100%;
+    position: absolute;
+    bottom: 30px;
+    background-color: white;
+    box-sizing:border-box;
+    border-top: 1px solid #ccc;
+    display: none;
 }
