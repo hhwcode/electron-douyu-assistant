@@ -36,6 +36,7 @@ $(document).ready(function(){
     });
 
     $("#setting-show").click(function(){
+        $("#input-roomid").val(json.roomid);
         $(".setting").toggle();
     });
 
@@ -186,19 +187,19 @@ function analyseDanmu(msg) {
             }
         }
 
-        $('.chat-message ul').append('<li'+messageBg+'>' + '[' + msg['level'] + ']' + '<span>' + msg['nn'] + '</span>' + 
-        '： ' + '<span style="color:' + chatMessageColor + '">' + msg['txt'] + '</span>' + '</li>');
+        $('.chat-message ul').append('<li'+messageBg+'>' + '[' + msg['level'] + '] ' + '<span>' + msg['nn'] + '</span>' + 
+        '： ' + '<span style="font-weight:bold;color:' + chatMessageColor + '">' + msg['txt'] + '</span>' + '</li>');
 
         //多余200条删除顶部弹幕
         count = count + 1;
-        if(count > 200) {
+        if(count > 500) {
             $('.chat-message ul').children('li:first').remove();
         }     
     }
     //进房信息
     if (msg['type'] == 'uenter') {
 
-        $('.chat-message ul').append('<li style="color:#666">' + '[' + msg['level'] + ']' + msg['nn'] + ' 进入直播间');
+        $('.chat-message ul').append('<li style="color:#666">' + '[' + msg['level'] + '] ' + msg['nn'] + ' 进入直播间');
 
         count = count + 1;
         if(count > 200) {
