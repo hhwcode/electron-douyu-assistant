@@ -3,6 +3,8 @@
 > electron项目
 ## Build Setup
 
+> 下载地址：https://github.com/hhwcode/electron-douyu-assistant/releases
+
 ``` bash
 # 安装 dependencies
 npm install
