@@ -2,18 +2,23 @@ var $ = require('jquery')
 
 const net = require('net');
 const config = require('./config/config');
+const request = require('request');
 
 //房间号
 var roomid = config.roomId;
 var scrollable = true;
 var count = 0;
 
-connectToDouyu(roomid);
+connectToDouyu();
+
+getInfo();
 
 /**
- * 移动滚动条停止滚动弹幕
+ * 事件监听
  */
 $(document).ready(function(){
+
+    //滚动事件监听
     $('.chat-message').scroll(function(){
         var h = $('.chat-message').scrollTop() - ($('.chat-message ul').height() - $('.chat-message').height());
         if(h < -10) {
@@ -24,7 +29,7 @@ $(document).ready(function(){
     });
 });
 
-function connectToDouyu(roomid) {
+function connectToDouyu() {
     //创建连接
     const s = net.connect({
         port: 8601,
@@ -55,6 +60,26 @@ function connectToDouyu(roomid) {
         let msg = 'type@=mrkl/';
         sendData(s, msg);
     }, 45000);
+}
+
+//获取房间信息
+function getRoomInfo() {
+    request('http://open.douyucdn.cn/api/RoomApi/room/' + roomid, (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            // console.log(body)
+            let data = JSON.parse(body).data;
+            $("title").html(data.room_name);
+            console.log(data);
+        }
+    });
+}
+
+//定时获取
+function getInfo() {
+    getRoomInfo();
+    setInterval(() => {
+        getRoomInfo();
+    }, 10000);
 }
 
 /**
@@ -106,8 +131,9 @@ function analyseDanmu(msg) {
     //贵族弹幕
     var messageBg = '';
 
+    //弹幕信息
     if (msg['type'] == 'chatmsg') {
-
+        //贵族弹幕等级
         if(msg['nc'] == '1') {
             // console.log(msg['nl']);
             if(msg['nl'] == '3') {
@@ -119,6 +145,7 @@ function analyseDanmu(msg) {
             }
             
         } else {
+            //彩色弹幕
             if(msg['col'] == '2') {
                 chatMessageColor = '#1e87f0';
             }
@@ -143,20 +170,24 @@ function analyseDanmu(msg) {
         $('.chat-message ul').append('<li'+messageBg+'>' + '[' + msg['level'] + ']' + '<span>' + msg['nn'] + '</span>' + 
         '： ' + '<span style="color:' + chatMessageColor + '">' + msg['txt'] + '</span>' + '</li>');
 
+        //多余200条删除顶部弹幕
         count = count + 1;
         if(count > 200) {
             $('.chat-message ul').children('li:first').remove();
         }     
     }
+    //进房信息
     if (msg['type'] == 'uenter') {
 
-        $('.chat-message ul').append('<li>' + '[' + msg['level'] + ']' + msg['nn'] + ' 进入了直播间');
+        $('.chat-message ul').append('<li style="color:#666">' + '[' + msg['level'] + ']' + msg['nn'] + ' 进入了直播间');
 
         count = count + 1;
         if(count > 200) {
             $('.chat-message ul').children('li:first').remove();
         } 
     }
+
+    //滚动弹幕
     if (this.scrollable) {
         let h = $('.chat-message ul').height() - $('.chat-message').height();
         $('.chat-message').scrollTop(h);
