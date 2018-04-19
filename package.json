@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "package": "electron-packager ./ douyu --platform=win32 --arch=ia32 --out ./outApp --version 1.8.4"
+    "package": "electron-packager ./ douyu-assistant --platform=win32 --arch=ia32 --out ./outApp --version 1.8.4"
   },
   "author": "hehongwei",
   "license": "MIT",
