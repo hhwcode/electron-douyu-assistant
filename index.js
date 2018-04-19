@@ -3,13 +3,14 @@ var $ = require('jquery')
 const net = require('net');
 var request = require('request');
 var fs = require('fs')
+const path = require('path')
 
 var json = '';
 var scrollable = true;
 var count = 0;
 
 //读取文件获取房间号
-fs.readFile('./config/config.json','utf8',function (err, data) {
+fs.readFile(__dirname+'/config/config.json','utf8',function (err, data) {
     if(err) console.log(err);
     json=JSON.parse(data);
 
@@ -233,7 +234,7 @@ function changeRoom() {
     if(pattern.test(roomid)) {
         json.roomid = roomid;
         let r = JSON.stringify(json);
-        fs.writeFile('./config/config.json',r,(err)=>{
+        fs.writeFile(__dirname+'/config/config.json',r,(err)=>{
             refresh();
         });
     }
