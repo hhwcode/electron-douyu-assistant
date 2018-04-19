@@ -35,7 +35,7 @@ function connectToDouyu() {
         port: 8601,
         host: 'openbarrage.douyutv.com'
     }, () => {
-        $('.chat-message ul').append('<li>弹幕服务器连接成功……</li>');
+        $('.chat-message ul').append('<li style="color:#666">弹幕服务器连接成功……</li>');
         console.log('弹幕服务器连接成功……');
     });
 
@@ -69,6 +69,10 @@ function getRoomInfo() {
             // console.log(body)
             let data = JSON.parse(body).data;
             $("title").html(data.room_name);
+            $(".room-id").html(data.room_id);
+            $(".room-status").html(data.room_status == '2' ? '<span style="color:orange;font-size:20px;">●</span>':'<span style="color:green;font-size:20px;">●</span>');
+            $(".hn").html(data.hn);
+            $(".fans-num").html(data.fans_num);
             console.log(data);
         }
     });
@@ -179,7 +183,7 @@ function analyseDanmu(msg) {
     //进房信息
     if (msg['type'] == 'uenter') {
 
-        $('.chat-message ul').append('<li style="color:#666">' + '[' + msg['level'] + ']' + msg['nn'] + ' 进入了直播间');
+        $('.chat-message ul').append('<li style="color:#666">' + '[' + msg['level'] + ']' + msg['nn'] + ' 进入直播间');
 
         count = count + 1;
         if(count > 200) {

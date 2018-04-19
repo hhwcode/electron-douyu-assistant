@@ -55,3 +55,9 @@ ul li {
     width: 100%;
     border: 1px solid #ccc;
 }
+
+.bottom span {
+    font-size: 13px;
+    height: 30px;
+    line-height: 30px;
+}
